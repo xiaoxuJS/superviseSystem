@@ -6,11 +6,7 @@ import "braft-editor/dist/index.css";
 
 import {_downloadFiles, _uploadFiles} from '../../Api/fileApi'
 
-
-
-const RochText = () => {
-    // 获取富文本内容
-    function handleContentChange(value) {}
+const RochText = ( {handleContentChange, value }) => {
     // 上传文件
     function myUploadFn(param) {
       console.log(_uploadFiles())
@@ -53,13 +49,13 @@ const RochText = () => {
       xhr.open('POST', serverURL, true)
       // const token = sessionStorage.getItem('token')
       // xhr.setRequestHeader("Authorization", token);
-      console.log()
       xhr.send(fd)
     }
   
   return (
     <BraftEditor
       style={{ border: "1px solid #bbbbbb" }}
+      value = {value}
       onChange={handleContentChange}
       media={{ uploadFn: myUploadFn }}
     />

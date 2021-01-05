@@ -1,49 +1,59 @@
-import React from "react";
-import { useHistory } from "react-router-dom";
-import {
-  PageHeader,
-  Divider,
-  Button,
-  Tabs,
-  Table, Tag, Space
-} from "antd";
+import React, { useEffect, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+//api
+import { superviseGet } from "../../Api/userApi";
+import { PageHeader, Divider, Button, Tabs, Table, Tag, Space } from "antd";
 import { SuperviseDetailsBox } from "./style.js";
 
-import EssentialValue from '../../components/EssentialValue'
+import EssentialValue from "../../components/EssentialValue";
 const { TabPane } = Tabs;
 
 const SuperviseDetails = () => {
   const history = new useHistory();
+  const location = new useLocation();
+  const [detailsData, setDetailsData] = useState({})
+  useEffect(() => {
+    const dataValue = {
+      id: location.state.id
+    };
+    ;(async () => {
+      const { success, data } = await superviseGet(dataValue)
+      if(success) {
+        setDetailsData(data)
+      }
+    })();
+  }, [location.state.id]);
+
   const callback = (key) => {
     console.log(key);
   };
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: text => <span>{text}</span>,
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <span>{text}</span>,
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
+      title: "Age",
+      dataIndex: "age",
+      key: "age",
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
     },
     {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: tags => (
+      title: "Tags",
+      key: "tags",
+      dataIndex: "tags",
+      render: (tags) => (
         <>
-          {tags.map(tag => {
-            let color = tag.length > 5 ? 'geekblue' : 'green';
-            if (tag === 'loser') {
-              color = 'volcano';
+          {tags.map((tag) => {
+            let color = tag.length > 5 ? "geekblue" : "green";
+            if (tag === "loser") {
+              color = "volcano";
             }
             return (
               <Tag color={color} key={tag}>
@@ -55,38 +65,42 @@ const SuperviseDetails = () => {
       ),
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: "Action",
+      key: "action",
       render: (text, record) => (
         <Space size="middle">
-          <Button type="primary" onClick = {() => history.push('/reportEvolve')}>修改</Button>
+          <Button type="primary" onClick={() => history.push("/reportEvolve")}>
+            修改
+          </Button>
           <Button type="primary">删除</Button>
-          <Button type="primary" onClick = {() => history.push('/reportEvolve')}>详情</Button>
+          <Button type="primary" onClick={() => history.push("/reportEvolve")}>
+            详情
+          </Button>
         </Space>
       ),
     },
   ];
   const data = [
     {
-      key: '1',
-      name: 'John Brown',
+      key: "1",
+      name: "John Brown",
       age: 32,
-      address: 'New York No. 1 Lake Park',
-      tags: ['nice', 'developer'],
+      address: "New York No. 1 Lake Park",
+      tags: ["nice", "developer"],
     },
     {
-      key: '2',
-      name: 'Jim Green',
+      key: "2",
+      name: "Jim Green",
       age: 42,
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
+      address: "London No. 1 Lake Park",
+      tags: ["loser"],
     },
     {
-      key: '3',
-      name: 'Joe Black',
+      key: "3",
+      name: "Joe Black",
       age: 32,
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
+      address: "Sidney No. 1 Lake Park",
+      tags: ["cool", "teacher"],
     },
   ];
   return (
@@ -99,10 +113,12 @@ const SuperviseDetails = () => {
       <Divider />
       <Tabs defaultActiveKey="1" onChange={callback}>
         <TabPane tab="督办事项" key="1">
-          <EssentialValue />
+          <EssentialValue detailsData = { detailsData } />
         </TabPane>
         <TabPane tab="任务进展" key="2">
-          <Button type="primary" onClick = {() => history.push('/reportEvolve')}>汇报进展</Button>
+          <Button type="primary" onClick={() => history.push("/reportEvolve")}>
+            汇报进展
+          </Button>
           <Table columns={columns} dataSource={data} />
         </TabPane>
       </Tabs>

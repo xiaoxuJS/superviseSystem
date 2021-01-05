@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useState, useCallback } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+// api
+import { superviseGet } from "../../Api/userApi";
+import { superviseList } from "../../Api/messageApi";
 import {
   PageHeader,
   Divider,
@@ -14,16 +17,21 @@ import {
   Space,
 } from "antd";
 import { SuperviseApplyBox } from "./style.js";
+import EssentialValue from "../../components/EssentialValue";
 
 const { Option } = Select;
 
 /**
- * 督办事项申请
+ * 立项审核
  */
 
 const SuperviseLead = () => {
   const history = new useHistory();
+  const location = new useLocation();
+
   const [menu, setMenu] = useState(null);
+  const [detailsData, setDetailsData] = useState({}); //详情数据
+  const [depData, setDepData] = useState([]); //单位列表
   const columns = [
     {
       title: "Name",
@@ -97,14 +105,33 @@ const SuperviseLead = () => {
     },
   ];
 
+  const detailsDataFun = useCallback(() => {
+    (async () => {
+      const { success, data } = await superviseGet({ id: location.state.id });
+      if (success) {
+        setDetailsData(data);
+      }
+    })();
+  }, [location.state.id]);
+
+  const superviseListFun = useCallback(() => {
+    (async () => {
+      const { success, data } = await superviseList();
+      if (success) {
+        setDepData(data);
+      }
+    })();
+  }, []);
+
   useEffect(() => {
     console.log(sessionStorage.getItem("menu"));
     setMenu(sessionStorage.getItem("menu"));
-
+    superviseListFun();
+    detailsDataFun();
     return () => {
       sessionStorage.removeItem("menu");
     };
-  }, []);
+  }, [detailsDataFun, superviseListFun]);
 
   const onFinish = (values) => {
     console.log("Success:", values);
@@ -119,30 +146,11 @@ const SuperviseLead = () => {
       <PageHeader
         ghost={false}
         onBack={() => history.go("-1")}
-        title="督办事项申请"
+        title="立项审核"
       />
       <Divider />
+      <EssentialValue detailsData={detailsData} />
       <Row>
-        <Col span={24}>基本信息</Col>
-        <Col span={12}>任务名称：</Col>
-        <Col span={12}>编号：</Col>
-        <Col span={12}>任务类型：</Col>
-        <Col span={12}>督办状态：</Col>
-        <Col span={12}>下达时间：</Col>
-        <Col span={12}>完成时限：</Col>
-        <Col span={12}>汇报周期：</Col>
-      </Row>
-      <Row>
-        <Col span={24}>承办单位</Col>
-        <Col span={12}>单位：</Col>
-        <Col span={12}>负责人：</Col>
-        <Col span={12}>电话：</Col>
-      </Row>
-      <Row>
-        <Col span={12}>是否公示：</Col>
-        <Col span={12}>附件：</Col>
-        <Col span={12}>工作内容：</Col>
-
         {menu === "/superviseManage" ? (
           <Col span={24}>
             <Form
@@ -157,9 +165,18 @@ const SuperviseLead = () => {
               </Form.Item>
               <Form.Item name="select" label="主办单位" hasFeedback>
                 <Select placeholder="请选择督办状态">
-                  <Option value="china">未立项</Option>
-                  <Option value="usa">办理中</Option>
-                  <Option value="usa">已办结</Option>
+                  {depData
+                    ? depData.map((item) => {
+                        return (
+                          <Option
+                            key={item.departmentId}
+                            value={item.departmentId}
+                          >
+                            {item.departmentName}
+                          </Option>
+                        );
+                      })
+                    : null}
                 </Select>
               </Form.Item>
               <Form.Item label="">
