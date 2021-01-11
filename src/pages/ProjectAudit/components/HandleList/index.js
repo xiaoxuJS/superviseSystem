@@ -1,89 +1,69 @@
-import React from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
-  useHistory
-} from 'react-router-dom'
-import { Table, Tag, Space, Button } from 'antd';
+  superviseLogApplicationList
+} from '../../../../Api/userApi';
+import { Table, Space, Button } from 'antd';
 
+// 枚举 审核流程
+import {statusEnum, currentNodeEnum} from '../../../../utils/enum'
 const HandleList = () => {
   const history = new useHistory();
+  const [submit1LIst, submit1List] = useState([]);
+  const submitLIstFun = useCallback(() => {
+    ;(async () => {
+      const {success, data} = await superviseLogApplicationList({handleStatus: 1});
+      if( success ) {
+        submit1List(data.records)
+      }
+    })();
+  },[])
+  useEffect(() => {
+submitLIstFun();
+  },[submitLIstFun])
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: text => <span>{text}</span>,
+      title: '#',
+      render: (text, record, index) => <span>{index + 1}</span>,
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
+      title: '标题',
+      dataIndex: 'title'
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
+      title: '审核流程',
+      dataIndex: 'taskStatus',
+      render: text => <span>{statusEnum[text]}</span>,
     },
     {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: tags => (
-        <>
-          {tags.map(tag => {
-            let color = tag.length > 5 ? 'geekblue' : 'green';
-            if (tag === 'loser') {
-              color = 'volcano';
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
+      title: '办理人',
+      dataIndex: 'reviewerName'
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: '节点名称',
+      dataIndex: 'currentNode',
+      render: text => <span>{currentNodeEnum[text]}</span>,
+    },
+    {
+      title: '接收时间',
+      dataIndex: 'acceptTime'
+    },
+    {
+      title: '操作',
       render: (text, record) => (
         <Space size="middle">
-          <Button type = 'primary' onClick = {() => handleEnterSuperviseApply()}>查看</Button>
+          <Button type = 'primary' onClick = {() => handleEnterSuperviseApply(record.taskId)}>查看</Button>
         </Space>
       ),
     },
   ];
-  
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-      tags: ['nice', 'developer'],
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
-    },
-  ];
 
-  const handleEnterSuperviseApply = () => {
+  const handleEnterSuperviseApply = (id) => {
     sessionStorage.setItem('menu', '/projectAudit');
-    history.push('/superviseApply')
+    history.push({pathname:'/superviseApply', state: {id }})
   } 
   return (
-    <Table columns={columns} dataSource={data} />
+    <Table columns={columns} dataSource={submit1LIst} rowKey = 'id' />
   )
 }
 

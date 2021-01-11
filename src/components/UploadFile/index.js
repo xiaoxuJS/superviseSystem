@@ -111,6 +111,7 @@ function UploadFile({
     <Upload
       action={_uploadFiles()}
       // headers={{ Authorization: userData.token }}
+      headers={{ account: "jiangnaiqian" }}
       onChange={onUploadChange}
       onRemove={onUploadMove}
       onPreview={onPreview}

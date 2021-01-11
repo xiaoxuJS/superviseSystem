@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
-  superviseLogApplicationList
+  superviseLogFinishList
 } from '../../../../Api/userApi';
 import { Table, Space, Button } from 'antd';
 // 枚举 审核流程
@@ -12,7 +12,7 @@ const TodoList = () => {
   const [submit0LIst, submit0List] = useState([]);
   const submitLIstFun = useCallback(() => {
     ;(async () => {
-      const {success, data} = await superviseLogApplicationList({handleStatus: 0});
+      const {success, data} = await superviseLogFinishList({handleStatus: 0 });
       if( success ) {
         submit0List(data.records)
       }
@@ -59,7 +59,7 @@ submitLIstFun();
   ];
 
   const handleEnterSuperviseApply = (data) => {
-    sessionStorage.setItem('menu', '/projectAudit');
+    sessionStorage.setItem('menu', '/okAudit');
     history.push({pathname:'/superviseApply', state: {id: data.taskId, logId:  data.logId}})
   }
   return (

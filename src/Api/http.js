@@ -32,7 +32,8 @@ const http = (url, method, args = {}) => {
             url,
             method,
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "account": "jiangenhui"
             },
             [xhrArgsName]: args,
         })
@@ -40,7 +41,6 @@ const http = (url, method, args = {}) => {
                 resolve(response.data);
             })
             .catch((error) => {
-                console.dir(error);
                 reject(error);
             });
     });

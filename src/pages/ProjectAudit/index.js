@@ -1,6 +1,11 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
+
+
 import { PageHeader, Divider, Tabs } from "antd";
+import {
+  ProjectAuditBox
+} from './style'
 
 import HandleList from "./components/HandleList";
 import TodoList from "./components/TodoList";
@@ -13,15 +18,15 @@ const { TabPane } = Tabs;
 
 const ProjectAudit = () => {
   const history = new useHistory();
+
   const callback = (key) => {
-    console.log(key);
+    // console.log(key);
   };
   return (
-    <div>
+    <ProjectAuditBox>
       <PageHeader
         ghost={false}
-        onBack={() => history.go("-1")}
-        title="任务进展"
+        title="督办事项申请"
       />
       <Divider />
       <Tabs defaultActiveKey="1" onChange={callback}>
@@ -32,7 +37,7 @@ const ProjectAudit = () => {
           <HandleList />
         </TabPane>
       </Tabs>
-    </div>
+    </ProjectAuditBox>
   );
 };
 

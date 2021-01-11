@@ -16,6 +16,7 @@ import SupervisoryStatistics from '../pages/SupervisoryStatistics'; //督办统�
 import SuperviseApply from '../pages/SuperviseApply'; //督办事项申请
 import SuperviseDetails from '../pages/SuperviseDetails'; //督办详情
 import ReportEvolve from '../pages/ReportEvolve'; //汇报进展
+import TaskEvolve from '../pages/TaskEvolve'; //任务进展
 
 
 import AddProject from '../pages/AddProject'; //立项
@@ -100,6 +101,10 @@ const userRouter = [
   {
     path: "/reportEvolve",
     component: ReportEvolve,
+  },
+  {
+    path: "/taskEvolve",
+    component: TaskEvolve,
   }
 ];
 

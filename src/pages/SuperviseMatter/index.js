@@ -1,10 +1,12 @@
-import React from "react";
-import { useHistory } from 'react-router-dom'
-import { Typography, Divider, Button, Table, Tag, Space } from "antd";
+import React, { useState, useEffect, useCallback } from "react";
+import { useHistory } from "react-router-dom";
+import { superviseList } from "../../Api/userApi";
 
-import SelectSupervise from "./components/SelectSupervise";
+import { Divider, Button, Table, Space, PageHeader, message } from "antd";
+import { SuperviseMatterBox } from "./style";
 
-const { Title } = Typography;
+import SelectSupervise from "../../components/SelectSupervise";
+import filterObjectUndefined from "../../utils/filterObjectUndefined";
 
 /**
  * 督办事项页面 -- 领导督办页面
@@ -12,96 +14,118 @@ const { Title } = Typography;
 
 const SuperviseMatter = () => {
   const history = new useHistory();
+  const [data, setData] = useState([]); //获取数据
+  const [total, setTotal] = useState(0); //用户总条数
+  const [pageNum] = useState(1);
+  const [pageSize] = useState(10);
+  const handleList = useCallback((values= {}) => {
+    (async () => {
+      const { success, data } = await superviseList(values);
+      if (success) {
+        setData(data.records);
+        setTotal(data.total);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    handleList();
+  }, [handleList]);
+
+  const pagination = {
+    current: pageNum,
+    pageSize,
+    total,
+    showTotal: () => `总条数 ${total} 条`,
+    onChange: (page, pageSize) => {
+      // console.log(page, pageSize);
+    },
+  };
+
+  const status = {
+    1: "申请中",
+    2: "审核中",
+    3: "办理中",
+    4: "申请办结",
+    5: "已完成",
+  };
   const columns = [
     {
       title: "#",
-      dataIndex: "name",
       render: (text, record, index) => <span>{index + 1}</span>,
     },
     {
       title: "任务名称",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "taskName",
       render: (text) => <span>{text}</span>,
     },
     {
       title: "下达时间",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "releaseTime",
     },
     {
       title: "完成时限",
-      dataIndex: "address",
-      key: "address",
+      dataIndex: "timeLimit",
     },
     {
       title: "督办状态",
-      key: "tags",
-      dataIndex: "tags",
-      render: (tags) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? "geekblue" : "green";
-            if (tag === "loser") {
-              color = "volcano";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
+      render: (text, record) => <span>{status[record.status]}</span>,
     },
     {
       title: "操作",
-      key: "action",
       render: (text, record) => (
         <Space size="middle">
-          <Button type="primary"  onClick = {() => handleEnterSuperviseDetails()} >
+          <Button
+            type="primary"
+            onClick={() => handleEnterSuperviseDetails(record.id)}
+          >
             查看
           </Button>
-          <Button type="primary">申请办结</Button>
+          {/* 只有办理中的时候有申请办结 */}
+          {record.status === 3 ? (
+            <Button
+              type="primary"
+              onClick={() => handleSuperviseApply(record.id)}
+            >
+              申请办结
+            </Button>
+          ) : null}
         </Space>
       ),
     },
   ];
-  const data = [
-    {
-      key: "1",
-      name: "John Brown",
-      age: 32,
-      address: "New York No. 1 Lake Park",
-      tags: ["nice", "developer"],
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
-      tags: ["loser"],
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      age: 32,
-      address: "Sidney No. 1 Lake Park",
-      tags: ["cool", "teacher"],
-    },
-  ];
-  const handleEnterSuperviseDetails = () => {
-    history.push('/superviseDetails')
-  }
+  const handleEnterSuperviseDetails = (id) => {
+    sessionStorage.setItem("menu", "/superviseMatter");
+    history.push({ pathname: "/superviseDetails", state: { id } });
+  };
+  const handleSuperviseApply = (id) => {
+    sessionStorage.setItem("menu", "/superviseMatter");
+    history.push({ pathname: "/superviseApply", state: { id } });
+  };
+
+  //获取搜索数据
+  const handleSelectCondition = (values) => {
+    const data = filterObjectUndefined(values);
+    if (JSON.stringify(data) !== "{}") {
+      handleList(data);
+    } else {
+      message.warning("请填写筛选条件！");
+    }
+  };
 
   return (
-    <div>
-      <Title level={2}>督办事项管理</Title>
+    <SuperviseMatterBox>
+      <PageHeader ghost={false} title="督办事项" />
       <Divider />
-      <SelectSupervise />
+      <SelectSupervise handleSelectCondition={handleSelectCondition} />
       <Divider />
-      <Table columns={columns} dataSource={data} />
-    </div>
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={pagination}
+        rowKey="key"
+      />
+    </SuperviseMatterBox>
   );
 };
 

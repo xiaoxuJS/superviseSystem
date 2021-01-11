@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import BraftEditor from 'braft-editor';
+// 引入编辑器组件
+import BraftEditor from "braft-editor";
+// 引入编辑器样式
+import "braft-editor/dist/index.css";
 //接口
 import { superviseList } from "../../Api/messageApi";
-import { superviseAdd, superviseGet } from "../../Api/userApi";
+import { superviseAdd, superviseGet, superviseModify } from "../../Api/userApi";
 import {
   PageHeader,
   Button,
@@ -22,7 +25,6 @@ import {
 import dayjs from "dayjs";
 import { AddProjectBox } from "./style";
 //引入组件
-import RichText from "../../components/RichText";
 import UploadFile from "../../components/UploadFile";
 
 // antd
@@ -48,7 +50,6 @@ const AddProject = () => {
     },
   ]);
   const [several, setSeveral] = useState(1);
-  const [htmlValue, setHtmlValue] = useState(BraftEditor.createEditorState(null)); //复选框内容
   const [fileArray, setFileArray] = useState([]); //上传附件id
   const [fileList, setFileList] = useState([]); //上传附件列表
 
@@ -58,7 +59,6 @@ const AddProject = () => {
       (async () => {
         const { success, data } = await superviseGet({ id: location.state.id });
         if (success) {
-          console.log(data);
           let newArray = {};
           let newAddUnit = [];
           newArray.taskName = data.taskName; //任务名称
@@ -67,7 +67,7 @@ const AddProject = () => {
           newArray.organizer = data.organizer; //主办单位
           newArray.organizerPerson = data.organizerPerson; //主办单位负责人
           newArray.organizerMobile = data.organizerMobile; //联系方式
-          if (data.depList.length > 1) {
+          if ( data.depList && data.depList.length > 1) {
             for (const key in data.depList) {
               if (key > 0) {
                 newAddUnit.push({
@@ -93,7 +93,7 @@ const AddProject = () => {
                 data.depList[key].chargePerson; //协办单位负责人
               newArray[newAddUnit[key].telephone] = data.depList[key].telephone; //联系方式
             }
-          } else if (data.depList.length === 1) {
+          } else if ( data.depList && data.depList.length === 1) {
             newArray.dept = data.depList[0].dept; //协办单位
             newArray.chargePerson = data.depList[0].chargePerson; //协办单位负责人
             newArray.telephone = data.depList[0].telephone; //联系方式
@@ -111,21 +111,17 @@ const AddProject = () => {
             }
             setFileList(newFileList);
           }
-
-          setHtmlValue(data.workContent) ;//工作内容
-          // newArray.workContent = data.workContent; 
-          console.log(newArray);
+          newArray.workContent = BraftEditor.createEditorState(data.workContent)
           setFieldsValue(newArray);
         }
       })();
-    } else {
-      (async () => {
-        const { success, data } = await superviseList();
-        if (success) {
-          setDepData(data);
-        }
-      })();
     }
+    (async () => {
+      const { success, data } = await superviseList();
+      if (success) {
+        setDepData(data);
+      }
+    })();
   }, [location.state, setFieldsValue]);
   // form
   const onFinish = (values) => {
@@ -138,7 +134,7 @@ const AddProject = () => {
     data.organizerMobile = values.organizerMobile; //主办单位联系方式
     data.publicity = values.publicity; //是否公开
     values.workContent
-      ? (data.workContent = values.workContent)
+      ? (data.workContent = values.workContent.toHTML())
       : (values.workContent = undefined); //工作内容
     fileArray.length > 0 ? (data.attachmentIds = fileArray) : setFileArray([]); //上传附件 id
     data.depList = []; //协助部门
@@ -151,14 +147,25 @@ const AddProject = () => {
         });
       }
     }
-    htmlValue ? (data.workContent = htmlValue) : setHtmlValue(null); //工作内容
-    (async () => {
-      const { success } = await superviseAdd(data);
-      if (success) {
-        message.success("立项成功！");
-        history.push("/superviseManage");
-      }
-    })();
+    if(location.state) {
+      data.id = location.state.id;
+      (async () => {
+        const { success } = await superviseModify(data);
+        if (success) {
+          message.success("立项修改成功！");
+          history.push("/superviseManage");
+        }
+      })();
+    }else{
+      (async () => {
+        const { success } = await superviseAdd(data);
+        if (success) {
+          message.success("立项成功！");
+          history.push("/superviseManage");
+        }
+      })();
+    }
+
   };
   //添加协办单位
   const handleAddUnit = () => {
@@ -191,7 +198,6 @@ const AddProject = () => {
   };
   //获取富文本框中的内容
   const handleContentChange = (value) => {
-    setHtmlValue(value.toHTML());
   };
 
   const config = {
@@ -390,13 +396,17 @@ const AddProject = () => {
           </Col>
           <Col span={24}>
             <Form.Item label="内容" labelCol={{ span: 2 }} name="workContent">
-              <RichText value = {htmlValue} handleContentChange={handleContentChange} />
+              <BraftEditor
+                style={{ border: "1px solid #bbbbbb" }}
+                onChange={handleContentChange}
+              />
+              {/* <RichText /> */}
             </Form.Item>
           </Col>
         </Row>
         <Form.Item {...tailLayout}>
           <Button type="primary" htmlType="submit">
-            保存
+            {location.state ? '修改' : '保存'}
           </Button>
         </Form.Item>
       </Form>

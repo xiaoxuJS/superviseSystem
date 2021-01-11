@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 //api
-import { superviseGet } from "../../Api/userApi";
-import { PageHeader, Divider, Button, Tabs, Table, Tag, Space } from "antd";
+import { superviseGet, superviseDetailLIst } from "../../Api/userApi";
+//antd
+import { PageHeader, Divider, Button, Tabs, Table, Space } from "antd";
 import { SuperviseDetailsBox } from "./style.js";
 
 import EssentialValue from "../../components/EssentialValue";
@@ -11,96 +12,79 @@ const { TabPane } = Tabs;
 const SuperviseDetails = () => {
   const history = new useHistory();
   const location = new useLocation();
-  const [detailsData, setDetailsData] = useState({})
-  useEffect(() => {
-    const dataValue = {
-      id: location.state.id
-    };
-    ;(async () => {
-      const { success, data } = await superviseGet(dataValue)
-      if(success) {
-        setDetailsData(data)
+  const [menu, setMenu] = useState(null);
+  const [detailsData, setDetailsData] = useState({});
+  const [detailListData, setDetailListData] = useState([]);
+
+  const detailList = useCallback((id) => {
+    console.log(id);
+    (async () => {
+      const { success, data } = await superviseDetailLIst({ taskId: id });
+      if (success) {
+        setDetailListData(data.records);
       }
     })();
-  }, [location.state.id]);
+  }, []);
+  useEffect(() => {
+    setMenu(sessionStorage.getItem("menu"));
+    const dataValue = {
+      id: location.state.id,
+    };
+    detailList(location.state.id);
+    (async () => {
+      const { success, data } = await superviseGet(dataValue);
+      if (success) {
+        setDetailsData(data);
+      }
+    })();
+  }, [location.state.id, detailList]);
 
   const callback = (key) => {
     console.log(key);
   };
   const columns = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <span>{text}</span>,
+      title: "#",
+      render: (text, recode, index) => <span>{index + 1}</span>,
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
+      title: "进展内容",
+      dataIndex: "progressContent",
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
+      title: "汇报时间",
+      dataIndex: "dataCreatedTime",
     },
+
     {
-      title: "Tags",
-      key: "tags",
-      dataIndex: "tags",
-      render: (tags) => (
-        <>
-          {tags.map((tag) => {
-            let color = tag.length > 5 ? "geekblue" : "green";
-            if (tag === "loser") {
-              color = "volcano";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
-    {
-      title: "Action",
-      key: "action",
+      title: "操作",
       render: (text, record) => (
         <Space size="middle">
-          <Button type="primary" onClick={() => history.push("/reportEvolve")}>
-            修改
-          </Button>
-          <Button type="primary">删除</Button>
-          <Button type="primary" onClick={() => history.push("/reportEvolve")}>
+          {menu && menu === "/superviseMatter" ? (
+            <>
+              <Button
+                type="primary"
+                onClick={() => history.push({pathname: "/reportEvolve", state: {id: record.id}})}
+              >
+                修改
+              </Button>
+              <Button type="primary" danger>删除</Button>
+            </>
+          ) : null}
+
+          <Button
+            type="primary"
+            onClick={() =>
+              history.push({
+                pathname: "/taskEvolve",
+                state: { id: record.id },
+              })
+            }
+          >
             详情
           </Button>
         </Space>
       ),
-    },
-  ];
-  const data = [
-    {
-      key: "1",
-      name: "John Brown",
-      age: 32,
-      address: "New York No. 1 Lake Park",
-      tags: ["nice", "developer"],
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
-      tags: ["loser"],
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      age: 32,
-      address: "Sidney No. 1 Lake Park",
-      tags: ["cool", "teacher"],
     },
   ];
   return (
@@ -113,13 +97,18 @@ const SuperviseDetails = () => {
       <Divider />
       <Tabs defaultActiveKey="1" onChange={callback}>
         <TabPane tab="督办事项" key="1">
-          <EssentialValue detailsData = { detailsData } />
+          <EssentialValue detailsData={detailsData} />
         </TabPane>
         <TabPane tab="任务进展" key="2">
-          <Button type="primary" onClick={() => history.push("/reportEvolve")}>
-            汇报进展
-          </Button>
-          <Table columns={columns} dataSource={data} />
+          {menu && menu === "/superviseMatter" ? (
+            <Button
+              type="primary"
+              onClick={() => history.push("/reportEvolve")}
+            >
+              汇报进展
+            </Button>
+          ) : null}
+          <Table columns={columns} dataSource={detailListData} rowKey="id" />
         </TabPane>
       </Tabs>
     </SuperviseDetailsBox>

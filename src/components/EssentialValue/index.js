@@ -1,7 +1,8 @@
 import React from "react";
 import { Row, Col, Typography, Space, Button } from "antd";
 import { EssentialValueBox } from "./style.js";
-
+//枚举
+import {statusEnum} from '../../utils/enum'
 const { Title } = Typography;
 
 /**
@@ -34,7 +35,7 @@ const EssentialValue = ({ detailsData }) => {
         <Col span={12}>
           <Row>
             <Col span={4}>督办状态：</Col>
-            <Col span={20}>{detailsData.status}</Col>
+            <Col span={20}>{statusEnum[detailsData.status]}</Col>
           </Row>
         </Col>
         <Col span={12}>
@@ -61,7 +62,7 @@ const EssentialValue = ({ detailsData }) => {
         <Col span={12}>
           <Row>
             <Col span={4}>主办单位：</Col>
-            <Col span={20}>{detailsData.organizer}</Col>
+            <Col span={20}>{detailsData.organizerName}</Col>
           </Row>
         </Col>
         <Col span={12}>
@@ -85,7 +86,7 @@ const EssentialValue = ({ detailsData }) => {
               <Col span={12}>
                 <Row>
                   <Col span={4}>单位：</Col>
-                  <Col span={20}>{item.dept}</Col>
+                  <Col span={20}>{item.depName}</Col>
                 </Row>
               </Col>
               <Col span={12}>

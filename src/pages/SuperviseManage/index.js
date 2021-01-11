@@ -1,10 +1,22 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useHistory } from "react-router-dom";
-import { Divider, Button, Table, Space, PageHeader, Modal, message } from "antd";
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  Divider,
+  Button,
+  Table,
+  Space,
+  PageHeader,
+  Modal,
+  message,
+} from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { SuperviseManageBox } from "./style";
-import SelectSupervise from "./components/SelectSupervise";
+
+import SelectSupervise from "../../components/SelectSupervise";
 import { superviseList, superviseDetails } from "../../Api/userApi";
+import filterObjectUndefined from "../../utils/filterObjectUndefined";
+// 枚举
+import { statusEnum } from "../../utils/enum";
 
 const { confirm } = Modal;
 
@@ -18,27 +30,20 @@ const SuperviseManage = () => {
   const [pageNum] = useState(1);
   const [pageSize] = useState(10);
 
-  const handleList = useCallback(() => {
+  const handleList = useCallback((values = {}) => {
     (async () => {
-      const { success, data } = await superviseList();
+      const { success, data } = await superviseList(values);
       if (success) {
         setData(data.records);
         setTotal(data.total);
       }
     })();
-  },[])
+  }, []);
 
   useEffect(() => {
     handleList();
   }, [handleList]);
 
-  const status = {
-    1: "申请中",
-    2: "审核中",
-    3: "办理中",
-    4: "申请办结",
-    5: "已完成",
-  };
   const columns = [
     {
       title: "#",
@@ -59,18 +64,33 @@ const SuperviseManage = () => {
     },
     {
       title: "督办状态",
-      render: (text, record) => <span>{status[record.status]}</span>,
+      render: (text, record) => <span>{statusEnum[record.status]}</span>,
     },
     {
       title: "操作",
       key: "action",
       render: (text, record) => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleEnterSuperviseApply(record.id)}>
-            立项审核
+          {record.status === 1 ? (
+            <Button
+              type="primary"
+              onClick={() => handleEnterSuperviseApply(record.id)}
+            >
+              立项审核
+            </Button>
+          ) : null}
+          {record.status === 1 ? (
+            <Button
+              type="primary"
+              onClick={() => handleChangePeiject(record.id)}
+            >
+              修改
+            </Button>
+          ) : null}
+
+          <Button type="primary" onClick={() => handleDelete(record.id)} danger>
+            删除
           </Button>
-          <Button type="primary"onClick = {() => handleChangePeiject(record.id)}>修改</Button>
-          <Button type="primary" onClick = {() => handleDelete(record.id)} danger>删除</Button>
           <Button
             type="primary"
             onClick={() => handleEnterSuperviseDetails(record.id)}
@@ -97,11 +117,11 @@ const SuperviseManage = () => {
   };
   // 修改立项
   const handleChangePeiject = (id) => {
-    history.push({pathname: "/addProject", state: {id}});
+    history.push({ pathname: "/addProject", state: { id } });
   };
   const handleEnterSuperviseApply = (id) => {
     sessionStorage.setItem("menu", "/superviseManage");
-    history.push({pathname: "/superviseApply", state: {id}});
+    history.push({ pathname: "/superviseApply", state: { id } });
   };
   const handleEnterSuperviseDetails = (id) => {
     history.push({ pathname: "/superviseDetails", state: { id } });
@@ -109,26 +129,34 @@ const SuperviseManage = () => {
   //删除项目
   const handleDelete = (id) => {
     confirm({
-      title: '确定删除吗?',
+      title: "确定删除吗?",
       icon: <ExclamationCircleOutlined />,
-      okType: 'danger',
+      okType: "danger",
       onOk() {
-        ;(async () => {
-          const {success} = await superviseDetails({id});
-          if(success) {
-            message.success('恭喜你删除成功！');
+        (async () => {
+          const { success } = await superviseDetails({ id });
+          if (success) {
+            message.success("恭喜你删除成功！");
             handleList();
           }
         })();
-      }
+      },
     });
-  }
-
+  };
+  //获取搜索数据
+  const handleSelectCondition = (values) => {
+    const data = filterObjectUndefined(values);
+    if (JSON.stringify(data) !== "{}") {
+      handleList(data);
+    } else {
+      message.warning("请填写筛选条件！");
+    }
+  };
   return (
     <SuperviseManageBox>
-      <PageHeader ghost={false} title="督办事项" />
+      <PageHeader ghost={false} title="督办事项管理" />
       <Divider />
-      <SelectSupervise />
+      <SelectSupervise handleSelectCondition={handleSelectCondition} />
       <Divider />
       <div>
         <Button type="primary" onClick={() => handleEnterAddProject()}>
@@ -139,7 +167,7 @@ const SuperviseManage = () => {
         columns={columns}
         dataSource={data}
         pagination={pagination}
-        rowKey="key"
+        rowKey="id"
       />
     </SuperviseManageBox>
   );
