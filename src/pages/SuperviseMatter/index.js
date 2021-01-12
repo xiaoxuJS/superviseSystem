@@ -15,15 +15,15 @@ import filterObjectUndefined from "../../utils/filterObjectUndefined";
 const SuperviseMatter = () => {
   const history = new useHistory();
   const [data, setData] = useState([]); //获取数据
-  const [total, setTotal] = useState(0); //用户总条数
-  const [pageNum] = useState(1);
-  const [pageSize] = useState(10);
+  // const [total, setTotal] = useState(0); //用户总条数
+  // const [pageNum] = useState(1);
+  // const [pageSize] = useState(10);
   const handleList = useCallback((values= {}) => {
     (async () => {
       const { success, data } = await superviseList(values);
       if (success) {
         setData(data.records);
-        setTotal(data.total);
+        // setTotal(data.total);
       }
     })();
   }, []);
@@ -32,15 +32,15 @@ const SuperviseMatter = () => {
     handleList();
   }, [handleList]);
 
-  const pagination = {
-    current: pageNum,
-    pageSize,
-    total,
-    showTotal: () => `总条数 ${total} 条`,
-    onChange: (page, pageSize) => {
-      // console.log(page, pageSize);
-    },
-  };
+  // const pagination = {
+  //   current: pageNum,
+  //   pageSize,
+  //   total,
+  //   showTotal: () => `总条数 ${total} 条`,
+  //   onChange: (page, pageSize) => {
+  //     // console.log(page, pageSize);
+  //   },
+  // };
 
   const status = {
     1: "申请中",
@@ -122,7 +122,7 @@ const SuperviseMatter = () => {
       <Table
         columns={columns}
         dataSource={data}
-        pagination={pagination}
+        // pagination={pagination}
         rowKey="key"
       />
     </SuperviseMatterBox>

@@ -1,6 +1,4 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
-
 
 import { PageHeader, Divider, Tabs } from "antd";
 import {
@@ -16,11 +14,6 @@ const { TabPane } = Tabs;
  */
 
 const OkAudit = () => {
-  const history = new useHistory();
-
-  const callback = (key) => {
-    // console.log(key);
-  };
   return (
     <OkAuditBox>
       <PageHeader
@@ -28,7 +21,7 @@ const OkAudit = () => {
         title="申请办结"
       />
       <Divider />
-      <Tabs defaultActiveKey="1" onChange={callback}>
+      <Tabs defaultActiveKey="1">
         <TabPane tab="待办工作" key="1">
           <TodoList />
         </TabPane>

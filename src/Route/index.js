@@ -18,7 +18,6 @@ function UserRoutes() {
         <Switch>
             {/* 渲染路由表 */}
             {userRouter.map(renderRouter)}
-            {/* <Route path="/system/document" /> */}
         </Switch>
     );
 }

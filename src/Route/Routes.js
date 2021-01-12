@@ -28,7 +28,7 @@ const menuRouter = [
       title: "督办管理",
       icon: <DatabaseOutlined />,
     },
-    path: "/superviseManage",
+    path: "/home/superviseManage",
     component: SuperviseManage,
   },
   {
@@ -37,7 +37,7 @@ const menuRouter = [
       title: "督办事项",
       icon: <FileDoneOutlined />,
     },
-    path: "/superviseMatter",
+    path: "/home/superviseMatter",
     component: SuperviseMatter,
   },
   {
@@ -46,7 +46,7 @@ const menuRouter = [
       title: "领导督办",
       icon: <FlagOutlined />,
     },
-    path: "/superviseLead",
+    path: "/home/superviseLead",
     component: SuperviseLead,
   },
   {
@@ -55,7 +55,7 @@ const menuRouter = [
       title: "立项审核",
       icon: <CalendarOutlined />,
     },
-    path: "/projectAudit",
+    path: "/home/projectAudit",
     component: ProjectAudit,
   },
   {
@@ -64,7 +64,7 @@ const menuRouter = [
       title: "办结审核",
       icon: <CalendarOutlined  />,
     },
-    path: "/okAudit",
+    path: "/home/okAudit",
     component: OkAudit,
   },
   {
@@ -73,7 +73,7 @@ const menuRouter = [
       title: "督办统计",
       icon: <ProjectOutlined />,
     },
-    path: "/supervisoryStatistics",
+    path: "/home/supervisoryStatistics",
     component: SupervisoryStatistics,
   }
 ];
@@ -83,7 +83,7 @@ const menuRouter = [
 const userRouter = [
   ...menuRouter, 
   {
-    path: "/",
+    path: "/home",
     component: SuperviseManage,
   },
   {

@@ -5,12 +5,16 @@ import { PageHeader, Divider, Form, Input, Button } from "antd";
 import { ReportEvolveBox } from "./style";
 import UploadFile from "../../components/UploadFile";
 
+/**
+ * 任务进展
+ */
+
 const ReportEvolve = () => {
   const history = new useHistory();
   const location = new useLocation();
   const [form] = Form.useForm();
   const { setFieldsValue } = form;
-  const [val, setVal] = useState({});
+  // const [val, setVal] = useState({});
   const [fileArray, setFileArray] = useState([]); //上传附件id
   const [fileList, setFileList] = useState([]); //上传附件列表
   useEffect(() => {
@@ -20,7 +24,7 @@ const ReportEvolve = () => {
           id: location.state.id,
         });
         if (success) {
-          setVal(data)
+          // setVal(data);
           const newObj = {};
           newObj.progressContent = data.progressContent;
           if(data.attachments) {
@@ -40,8 +44,6 @@ const ReportEvolve = () => {
     
   }, [location.state, setFieldsValue]);
   const onFinish = (values) => {
-    console.log(values)
-    console.log(fileArray)
     values.attachmentIds = fileArray;
     ;(async () => {
       const {success} = await superviseDetailAdd(values);

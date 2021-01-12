@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./pages/Home";
+import BasicLayout from "./layouts/BasicLayout"
 import { ConfigProvider } from "antd";
 
 //antd 中文
@@ -17,7 +18,8 @@ function App() {
       <Router basename="/">
         <ConfigProvider locale={zhCN}>
           <Switch>
-            <Route path="/" component={Home} />
+            <Route path="/home" component={Home} />
+            <Route exact path="/" component={BasicLayout} />
           </Switch>
         </ConfigProvider>
       </Router>

@@ -2,13 +2,9 @@ import React from "react";
 import { Form, Button, DatePicker, Row, Col, Space } from "antd";
 const { RangePicker } = DatePicker;
 
-const SelectModule = () => {
+const SelectModule = ({handleSelectModule}) => {
   const onFinish = (values) => {
-    console.log("Success:", values);
-  };
-
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+    handleSelectModule(values)
   };
   return (
     <Form
@@ -16,7 +12,6 @@ const SelectModule = () => {
       name="basic"
       initialValues={{ remember: true }}
       onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
     >
       <Row>
         <Col span={8}>

@@ -37,7 +37,7 @@ const SuperviseLead = () => {
   const history = new useHistory();
   const location = new useLocation();
 
-  const [menu, setMenu] = useState(null);
+  const [menuData, setMenuData] = useState(null);
   const [detailsData, setDetailsData] = useState({}); //详情数据
   const [leaderData, setLeaderData] = useState([]); //单位列表
   const [logList, setLogList] = useState([]); //单位列表
@@ -72,12 +72,12 @@ const SuperviseLead = () => {
       const { success, data } = await superviseGet({ id: location.state.id });
       if (success) {
         setDetailsData(data);
-        if (menu === "/okAudit") {
+        if (menuData === "/okAudit") {
           setInputText(data.logList[0].leaderOpinion);
         }
       }
     })();
-  }, [location.state.id]);
+  }, [location.state.id, menuData]);
 
   const leaderListFun = useCallback(() => {
     (async () => {
@@ -99,13 +99,10 @@ const SuperviseLead = () => {
     })();
   }, [location.state.id]);
   useEffect(() => {
-    setMenu(sessionStorage.getItem("menu"));
+    setMenuData(sessionStorage.getItem("menuData"));
     leaderListFun();
     detailsDataFun();
     superviseLogListFun();
-    return () => {
-      sessionStorage.removeItem("menu");
-    };
   }, [detailsDataFun, leaderListFun, superviseLogListFun]);
   //确定审核
   const onFinish = (values) => {
@@ -117,10 +114,10 @@ const SuperviseLead = () => {
     (async () => {
       const { success } = await superviseAudit(data);
       if (success) {
-        if (menu === "/superviseMatter") {
+        if (menuData === "/superviseMatter") {
           message.success("申请办结成功");
           history.push("/superviseMatter");
-        } else if (menu === "/superviseManage") {
+        } else if (menuData === "/superviseManage") {
           message.success("审核成功");
           history.push("/superviseManage");
         }
@@ -150,7 +147,7 @@ const SuperviseLead = () => {
           } else if (state === 3) {
             message.success("驳回成功！");
           }
-          history.push(menu);
+          history.push(menuData);
         }
       })();
     } else {
@@ -168,7 +165,7 @@ const SuperviseLead = () => {
       <Divider />
       <EssentialValue detailsData={detailsData} />
       <Row>
-        {menu === "/superviseManage" ? (
+        {menuData === "/superviseManage" ? (
           <Col span={24}>
             <Form
               // {...layout}
@@ -192,12 +189,12 @@ const SuperviseLead = () => {
                 <Select placeholder="请选择院领导">
                   {leaderData
                     ? leaderData.map((item) => {
-                        return (
-                          <Option key={item.id} value={item.id}>
-                            {item.userName}
-                          </Option>
-                        );
-                      })
+                      return (
+                        <Option key={item.id} value={item.id}>
+                          {item.userName}
+                        </Option>
+                      );
+                    })
                     : null}
                 </Select>
               </Form.Item>
@@ -210,7 +207,7 @@ const SuperviseLead = () => {
           </Col>
         ) : null}
       </Row>
-      {menu === "/projectAudit" ? (
+      {menuData === "/projectAudit" ? (
         <Row>
           <Col span={24}>办理信息</Col>
           <Col span={24}>
@@ -265,7 +262,7 @@ const SuperviseLead = () => {
         </Row>
       ) : null}
       {/* 申请办结办理 */}
-      {menu === "/okAudit" ? (
+      {menuData === "/okAudit" ? (
         <Row>
           <Col span={24}>办理信息</Col>
           <Col span={24}>
@@ -285,12 +282,12 @@ const SuperviseLead = () => {
               <span>
                 {detailsData.depList
                   ? detailsData.logList[detailsData.logList.length - 1]
-                      .dataCreatedTime
+                    .dataCreatedTime
                   : null}
               </span>
             </Space>
           </Col>
-          <Col span={24}>领导意见: {location.state.logId ? null : detailsData.logList ? `${detailsData.logList[detailsData.logList.length -2].leaderOpinion}${detailsData.logList[detailsData.logList.length -2].dataCreatedTime} `: null}</Col>
+          <Col span={24}>领导意见: {location.state.logId ? null : detailsData.logList ? `${detailsData.logList[detailsData.logList.length - 2].leaderOpinion}${detailsData.logList[detailsData.logList.length - 2].dataCreatedTime} ` : null}</Col>
 
           {location.state.logId ? (
             <>
@@ -329,7 +326,7 @@ const SuperviseLead = () => {
             </>) : null}
         </Row>
       ) : null}
-      {menu === "/superviseMatter" ? ( //申请办结
+      {menuData === "/superviseMatter" ? ( //申请办结
         <Row>
           <Col span={24}>
             <Form
@@ -347,12 +344,12 @@ const SuperviseLead = () => {
                 <Select placeholder="请选择院领导">
                   {leaderData
                     ? leaderData.map((item) => {
-                        return (
-                          <Option key={item.id} value={item.id}>
-                            {item.userName}
-                          </Option>
-                        );
-                      })
+                      return (
+                        <Option key={item.id} value={item.id}>
+                          {item.userName}
+                        </Option>
+                      );
+                    })
                     : null}
                 </Select>
               </Form.Item>

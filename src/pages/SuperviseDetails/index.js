@@ -17,7 +17,6 @@ const SuperviseDetails = () => {
   const [detailListData, setDetailListData] = useState([]);
 
   const detailList = useCallback((id) => {
-    console.log(id);
     (async () => {
       const { success, data } = await superviseDetailLIst({ taskId: id });
       if (success) {

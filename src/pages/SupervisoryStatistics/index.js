@@ -15,26 +15,21 @@ const { Title } = Typography;
 
 const SupervisoryStatistics = () => {
   const [data, setData] = useState([]);
-  const handleList = useCallback((values) => {
-    let selectValue = {};
-    if (values) {
-      selectValue = values;
-    } else {
-      selectValue = {
-        startTime: dayjs().subtract(30, "day").format("YYYY-MM-DD"),
-        endTime: dayjs().format("YYYY-MM-DD"),
-      };
-    }
+  const [startTime, setStartTime] = useState(dayjs().subtract(30, "day").format("YYYY-MM-DD"));
+  const [endTime, setEndTime] = useState(dayjs().format("YYYY-MM-DD"));
+  const handleList = useCallback(() => {
+    let selectValue = {        
+      startTime,
+      endTime
+    };
     (async () => {
       const { success, data } = await superviseStatistics(selectValue);
       if (success) {
         setData(data)
       }
     })();
-  }, []);
+  }, [endTime, startTime]);
   useEffect(() => {
-    console.log(dayjs().format("YYYY-MM-DD"));
-    console.log(dayjs().subtract(30, "day").format("YYYY-MM-DD"));
     handleList();
   }, [handleList]);
   const columns = [
@@ -64,13 +59,19 @@ const SupervisoryStatistics = () => {
       dataIndex: "total"
     },
   ];
+
+  const handleSelectModule = (values) => {
+    const {rangePicker} = values;
+    setStartTime(dayjs(rangePicker[0]).format("YYYY-MM-DD"));
+    setEndTime(dayjs(rangePicker[1]).format("YYYY-MM-DD"))
+  }
   return (
     <SupervisoryStatisticsBox>
       <PageHeader ghost={false} title="督办统计" />
       <Divider />
-      <SelectModule />
+      <SelectModule handleSelectModule = {handleSelectModule}/>
       <Divider />
-      <Title level={5}>h5. Ant Design</Title>
+      <Title level={5}>{startTime}~{endTime} </Title>
       <Table columns={columns} dataSource={data} size="small" bordered rowKey = 'departmentName' />
     </SupervisoryStatisticsBox>
   );

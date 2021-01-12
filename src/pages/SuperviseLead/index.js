@@ -18,15 +18,15 @@ import { statusEnum } from "../../utils/enum";
 const SuperviseApply = () => {
   const history = new useHistory();
   const [data, setData] = useState([]); //获取数据
-  const [total, setTotal] = useState(0); //用户总条数
-  const [pageNum] = useState(1);
-  const [pageSize] = useState(10);
+  // const [total, setTotal] = useState(0); //用户总条数
+  // const [pageNum] = useState(1);
+  // const [pageSize] = useState(10);
   const handleList = useCallback((values = {}) => {
     (async () => {
       const { success, data } = await superviseList(values);
       if (success) {
         setData(data.records);
-        setTotal(data.total);
+        // setTotal(data.total);
       }
     })();
   }, []);
@@ -34,15 +34,15 @@ const SuperviseApply = () => {
     handleList();
   }, [handleList]);
 
-  const pagination = {
-    current: pageNum,
-    pageSize,
-    total,
-    showTotal: () => `总条数 ${total} 条`,
-    onChange: (page, pageSize) => {
-      // console.log(page, pageSize);
-    },
-  };
+  // const pagination = {
+  //   current: pageNum,
+  //   pageSize,
+  //   total,
+  //   showTotal: () => `总条数 ${total} 条`,
+  //   onChange: (page, pageSize) => {
+  //     // console.log(page, pageSize);
+  //   },
+  // };
   const columns = [
     {
       title: "#",
@@ -103,7 +103,6 @@ const SuperviseApply = () => {
       <Table
         columns={columns}
         dataSource={data}
-        pagination={pagination}
         rowKey="key"
       />
     </SuperviseMatterBox>

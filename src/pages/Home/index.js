@@ -12,7 +12,7 @@ const Home = () => {
   const contentHeight = window.innerHeight - 140;
   const handleEnterPage = (pageUrl) => {
     sessionStorage.removeItem("menu");
-    history.push(pageUrl)
+    history.push(pageUrl);
   };
   return (
     <HomeAll>
