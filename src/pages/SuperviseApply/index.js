@@ -42,6 +42,7 @@ const SuperviseLead = () => {
   const [leaderData, setLeaderData] = useState([]); //单位列表
   const [logList, setLogList] = useState([]); //单位列表
   const [inputText, setInputText] = useState(null); //input
+  const [titleData, setTitleData] = useState(''); //input
   const columns = [
     {
       title: "#",
@@ -100,6 +101,13 @@ const SuperviseLead = () => {
   }, [location.state.id]);
   useEffect(() => {
     setMenuData(sessionStorage.getItem("menuData"));
+    if(sessionStorage.getItem("menuData") === '/home/okAudit' || sessionStorage.getItem("menuData") === '/home/superviseMatter') {
+      setTitleData('办结申请')
+    }else if(sessionStorage.getItem("menuData") === '/home/projectAudit') {
+      setTitleData('立项审核')
+    }else if(sessionStorage.getItem("menuData") === '/home/superviseManage') {
+      setTitleData('督办事项申请')
+    }
     leaderListFun();
     detailsDataFun();
     superviseLogListFun();
@@ -114,12 +122,15 @@ const SuperviseLead = () => {
     (async () => {
       const { success } = await superviseAudit(data);
       if (success) {
-        if (menuData === "/superviseMatter") {
+        if (menuData === "/home/superviseMatter") {
           message.success("申请办结成功");
-          history.push("/superviseMatter");
-        } else if (menuData === "/superviseManage") {
+          history.push("/home/superviseMatter");
+        } else if (menuData === "/home/superviseManage") {
           message.success("审核成功");
-          history.push("/superviseManage");
+          history.push("/home/superviseManage");
+        } else if (menuData === "/home/okAudit") {
+          message.success("办结审核成功");
+          history.push("/home/okAudit");
         }
       }
     })();
@@ -160,12 +171,12 @@ const SuperviseLead = () => {
       <PageHeader
         ghost={false}
         onBack={() => history.go("-1")}
-        title="立项审核"
+        title= {titleData}
       />
       <Divider />
       <EssentialValue detailsData={detailsData} />
       <Row>
-        {menuData === "/superviseManage" ? (
+        {menuData === "/home/superviseManage" ? (
           <Col span={24}>
             <Form
               // {...layout}
@@ -207,7 +218,7 @@ const SuperviseLead = () => {
           </Col>
         ) : null}
       </Row>
-      {menuData === "/projectAudit" ? (
+      {menuData === "/home/projectAudit" ? (
         <Row>
           <Col span={24}>办理信息</Col>
           <Col span={24}>
@@ -262,7 +273,7 @@ const SuperviseLead = () => {
         </Row>
       ) : null}
       {/* 申请办结办理 */}
-      {menuData === "/okAudit" ? (
+      {menuData === "/home/okAudit" ? (
         <Row>
           <Col span={24}>办理信息</Col>
           <Col span={24}>
@@ -326,7 +337,7 @@ const SuperviseLead = () => {
             </>) : null}
         </Row>
       ) : null}
-      {menuData === "/superviseMatter" ? ( //申请办结
+      {menuData === "/home/superviseMatter" ? ( //申请办结
         <Row>
           <Col span={24}>
             <Form

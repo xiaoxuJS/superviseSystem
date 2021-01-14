@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const EssentialValueBox = styled.div`
-  .ant-col-6{
+  .ant-col-3{
     text-align: right;
   }
   .ant-row{

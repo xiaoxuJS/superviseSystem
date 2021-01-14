@@ -113,18 +113,18 @@ const SuperviseManage = () => {
   // };
   // 立项
   const handleEnterAddProject = () => {
-    history.push("/addProject");
+    history.push("/home/addProject");
   };
   // 修改立项
   const handleChangePeiject = (id) => {
-    history.push({ pathname: "/addProject", state: { id } });
+    history.push({ pathname: "/home/addProject", state: { id } });
   };
   const handleEnterSuperviseApply = (id) => {
-    sessionStorage.setItem("menuData", "/superviseManage");
-    history.push({ pathname: "/superviseApply", state: { id } });
+    sessionStorage.setItem("menuData", "/home/superviseManage");
+    history.push({ pathname: "/home/superviseApply", state: { id } });
   };
   const handleEnterSuperviseDetails = (id) => {
-    history.push({ pathname: "/superviseDetails", state: { id } });
+    history.push({ pathname: "/home/superviseDetails", state: { id } });
   };
   //删除项目
   const handleDelete = (id) => {

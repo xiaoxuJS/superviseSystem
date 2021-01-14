@@ -81,7 +81,7 @@ const SuperviseApply = () => {
     },
   ];
   const handleEnterSuperviseDetails = (id) => {
-    history.push({ pathname: "/superviseDetails", state: { id } });
+    history.push({ pathname: "/home/superviseDetails", state: { id } });
   };
 
   //获取搜索数据

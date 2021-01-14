@@ -8,4 +8,7 @@ export const SuperviseApplyBox = styled.div`
   button{
     float: right
   }
+  .ant-col-24{
+    margin: 20px 0;
+  }
  `

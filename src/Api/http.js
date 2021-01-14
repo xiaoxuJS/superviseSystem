@@ -6,8 +6,8 @@ if (process.env.NODE_ENV === "development") { //开发环境
     ip = "10.4.55.198:8082"; //服务器
     baseUrl = "http://" + ip;
 } else if (process.env.NODE_ENV === "production") {
-    ip = "118.190.90.217/new";
-    baseUrl = "http://" + ip;
+    ip = "db.zzhyrj.com/duban";
+    baseUrl = "https://" + ip;
 }
 //对Axios进行封装，返回Promise对象
 Axios.interceptors.request.use(

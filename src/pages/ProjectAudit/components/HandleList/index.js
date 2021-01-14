@@ -60,7 +60,7 @@ submitLIstFun();
 
   const handleEnterSuperviseApply = (id) => {
     sessionStorage.setItem('menu', '/projectAudit');
-    history.push({pathname:'/superviseApply', state: {id }})
+    history.push({pathname:'/home/superviseApply', state: {id }})
   } 
   return (
     <Table columns={columns} dataSource={submit1LIst} rowKey = 'id' />

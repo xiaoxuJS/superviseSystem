@@ -48,7 +48,7 @@ function BasicLayout({history}) {
     }, [history]);
     return (
         <BasicLayoutBox>
-            <h1>黄河水利科学研究院绩效考核暨目标考核系统</h1>
+            <h1>黄河水利科学研究院督查考核系统</h1>
             <h2>欢迎您 <span style={{ fontSize: 16 }}>正在登录...</span></h2>
         </BasicLayoutBox>
     )

@@ -4,7 +4,6 @@ import { UploadOutlined } from "@ant-design/icons";
 import { _uploadFiles, _deleteFiles, _downloadFiles } from "../../Api/fileApi";
 import dayjs from "dayjs";
 import Axios from "axios";
-// import { getItem } from "../../utils/common";
 
 function UploadFile({
   tip,
@@ -15,10 +14,7 @@ function UploadFile({
   limit,
   showUploadList,
 }) {
-  // let userData = { token: "" };
-  // if (getItem("userData")) {
-  //   userData = getItem("userData");
-  // }
+  let userData = JSON.parse(sessionStorage.getItem('userInfo')).id ;
   const [fileList, setFileList] = useState([]);
 
   useEffect(() => {
@@ -110,8 +106,8 @@ function UploadFile({
   return (
     <Upload
       action={_uploadFiles()}
-      // headers={{ Authorization: userData.token }}
-      headers={{ account: "jiangnaiqian" }}
+      // headers={{ authorization: userData}}
+      headers={{ authorization: userData }}
       onChange={onUploadChange}
       onRemove={onUploadMove}
       onPreview={onPreview}

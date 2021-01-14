@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { superviseDetailGet, superviseDetailAdd } from "../../Api/userApi";
-import { PageHeader, Divider, Form, Input, Button } from "antd";
+import { PageHeader, Divider, Form, Input, Button, message } from "antd";
 import { ReportEvolveBox } from "./style";
 import UploadFile from "../../components/UploadFile";
 
@@ -45,10 +45,13 @@ const ReportEvolve = () => {
   }, [location.state, setFieldsValue]);
   const onFinish = (values) => {
     values.attachmentIds = fileArray;
+    values.taskId = JSON.parse(sessionStorage.getItem('userInfo')).depId;
+    // values.depId
     ;(async () => {
       const {success} = await superviseDetailAdd(values);
       if(success) {
-
+        message.success('提交成功！')
+        history.go(-1)
       }
     })();
   };

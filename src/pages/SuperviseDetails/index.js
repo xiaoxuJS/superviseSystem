@@ -25,7 +25,7 @@ const SuperviseDetails = () => {
     })();
   }, []);
   useEffect(() => {
-    setMenu(sessionStorage.getItem("menu"));
+    setMenu(sessionStorage.getItem("menuData"));
     const dataValue = {
       id: location.state.id,
     };
@@ -59,11 +59,11 @@ const SuperviseDetails = () => {
       title: "操作",
       render: (text, record) => (
         <Space size="middle">
-          {menu && menu === "/superviseMatter" ? (
+          {menu && menu === "/home/superviseMatter" ? (
             <>
               <Button
                 type="primary"
-                onClick={() => history.push({pathname: "/reportEvolve", state: {id: record.id}})}
+                onClick={() => history.push({pathname: "/home/reportEvolve", state: {id: record.id}})}
               >
                 修改
               </Button>
@@ -99,10 +99,10 @@ const SuperviseDetails = () => {
           <EssentialValue detailsData={detailsData} />
         </TabPane>
         <TabPane tab="任务进展" key="2">
-          {menu && menu === "/superviseMatter" ? (
+          {menu && menu === "/home/superviseMatter" ? (
             <Button
               type="primary"
-              onClick={() => history.push("/reportEvolve")}
+              onClick={() => history.push("/home/reportEvolve")}
             >
               汇报进展
             </Button>

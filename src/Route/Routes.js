@@ -87,23 +87,23 @@ const userRouter = [
     component: SuperviseManage,
   },
   {
-    path: "/addProject",
+    path: "/home/addProject",
     component: AddProject,
   },
   {
-    path: "/superviseApply",
+    path: "/home/superviseApply",
     component: SuperviseApply,
   },
   {
-    path: "/superviseDetails",
+    path: "/home/superviseDetails",
     component: SuperviseDetails,
   },
   {
-    path: "/reportEvolve",
+    path: "/home/reportEvolve",
     component: ReportEvolve,
   },
   {
-    path: "/taskEvolve",
+    path: "/home/taskEvolve",
     component: TaskEvolve,
   }
 ];

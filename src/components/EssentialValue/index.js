@@ -1,4 +1,6 @@
 import React from "react";
+import Axios from 'axios';
+import {_downloadFiles} from '../../Api/fileApi';
 import { Row, Col, Typography, Space, Button } from "antd";
 import { EssentialValueBox } from "./style.js";
 //枚举
@@ -10,6 +12,27 @@ const { Title } = Typography;
  */
 
 const EssentialValue = ({ detailsData }) => {
+
+  const handleDownloadFiles = (data) => {
+    Axios({
+      method: "get",
+      url: _downloadFiles(),
+      params: { attachmentId: data.id },
+      responseType: "blob",
+  }).then((response) => {
+      let blob = new Blob([response.data], {
+          type: response.data.type,
+      });
+      let downloadElement = document.createElement("a");
+      let href = window.URL.createObjectURL(blob); //创建下载的链接
+      downloadElement.href = href;
+      downloadElement.download = `${data.attachmentName}`; //下载后文件名
+      document.body.appendChild(downloadElement);
+      downloadElement.click(); //点击下载
+      document.body.removeChild(downloadElement); //下载完成移除元素
+      window.URL.revokeObjectURL(href); //释放blob对象
+  });
+  }
   return (
     <EssentialValueBox>
       <Title level={5}>基本信息</Title>
@@ -119,16 +142,16 @@ const EssentialValue = ({ detailsData }) => {
               <Space>
                 {detailsData.attachments &&
                   detailsData.attachments.map((item) => {
-                    return <Button type="link">{item.attachmentName}</Button>;
+                    return <Button type="link" onClick = {() => handleDownloadFiles(item)}>{item.attachmentName}</Button>;
                   })}
               </Space>
             </Col>
           </Row>
         </Col>
-        <Col span={12}>
+        <Col span={24}>
           <Row>
-            <Col span={6}>工作内容：</Col>
-            <Col span={16}>
+            <Col span={3}>工作内容：</Col>
+            <Col span={19}>
               <div
                 dangerouslySetInnerHTML={{ __html: detailsData.workContent }}
               ></div>

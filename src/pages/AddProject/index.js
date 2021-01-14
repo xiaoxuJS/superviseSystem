@@ -196,7 +196,7 @@ const AddProject = () => {
         const { success } = await superviseModify(data);
         if (success) {
           message.success("立项修改成功！");
-          history.push("/superviseManage");
+          history.push("/home/superviseManage");
         }
       })();
     } else {
@@ -204,7 +204,7 @@ const AddProject = () => {
         const { success } = await superviseAdd(data);
         if (success) {
           message.success("立项成功！");
-          history.push("/superviseManage");
+          history.push("/home/superviseManage");
         }
       })();
     }
@@ -299,7 +299,10 @@ const AddProject = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="电话" name={addUnit[key].telephone}>
+              <Form.Item label="电话" name={addUnit[key].telephone} rules={[{
+                pattern: /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/,
+                message: '请输入正确的手机号！'
+              }]}>
                 <Input />
               </Form.Item>
             </Col>
@@ -426,7 +429,10 @@ const AddProject = () => {
             <Form.Item
               label="联系方式"
               name="organizerMobile"
-              rules={[{ required: true, message: "请输入联系方式" }]}
+              rules={[{ required: true, message: "请输入联系方式" },{
+                pattern: /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/,
+                message: '请输入正确的手机号！'
+              }]}
             >
               <Input />
             </Form.Item>

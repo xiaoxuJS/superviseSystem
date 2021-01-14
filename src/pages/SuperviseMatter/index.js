@@ -15,10 +15,12 @@ import filterObjectUndefined from "../../utils/filterObjectUndefined";
 const SuperviseMatter = () => {
   const history = new useHistory();
   const [data, setData] = useState([]); //获取数据
+  const [buttonShow, setButtonShow] = useState(false); //获取数据
   // const [total, setTotal] = useState(0); //用户总条数
   // const [pageNum] = useState(1);
   // const [pageSize] = useState(10);
   const handleList = useCallback((values= {}) => {
+    values.departmentId = JSON.parse(sessionStorage.getItem('userInfo')).depId;
     (async () => {
       const { success, data } = await superviseList(values);
       if (success) {
@@ -29,6 +31,9 @@ const SuperviseMatter = () => {
   }, []);
 
   useEffect(() => {
+    if(JSON.parse(sessionStorage.getItem('userInfo')).functionList.indexOf('督办事项') > -1) {
+      setButtonShow(true)
+    }
     handleList();
   }, [handleList]);
 
@@ -82,7 +87,7 @@ const SuperviseMatter = () => {
             查看
           </Button>
           {/* 只有办理中的时候有申请办结 */}
-          {record.status === 3 ? (
+          {record.status === 3 && buttonShow ? (
             <Button
               type="primary"
               onClick={() => handleSuperviseApply(record.id)}
@@ -95,12 +100,12 @@ const SuperviseMatter = () => {
     },
   ];
   const handleEnterSuperviseDetails = (id) => {
-    sessionStorage.setItem("menu", "/superviseMatter");
-    history.push({ pathname: "/superviseDetails", state: { id } });
+    sessionStorage.setItem("menuData", "/home/superviseMatter");
+    history.push({ pathname: "/home/superviseDetails", state: { id } });
   };
   const handleSuperviseApply = (id) => {
-    sessionStorage.setItem("menu", "/superviseMatter");
-    history.push({ pathname: "/superviseApply", state: { id } });
+    sessionStorage.setItem("menuData", "/home/superviseMatter");
+    history.push({ pathname: "/home/superviseApply", state: { id } });
   };
 
   //获取搜索数据

@@ -59,8 +59,8 @@ submitLIstFun();
   ];
 
   const handleEnterSuperviseApply = (data) => {
-    sessionStorage.setItem('menu', '/okAudit');
-    history.push({pathname:'/superviseApply', state: {id: data.taskId, logId:  data.logId}})
+    sessionStorage.setItem('menuData', '/home/okAudit');
+    history.push({pathname:'/home/superviseApply', state: {id: data.taskId, logId:  data.logId}})
   }
   return (
     <Table columns={columns} dataSource={submit0LIst} rowKey = 'id' />
